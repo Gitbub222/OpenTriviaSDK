@@ -1,6 +1,8 @@
 # Dependency directory
 node_modules
 
+# api keys
+.env 
 
 # Ignore built ts files
 dist/**/*

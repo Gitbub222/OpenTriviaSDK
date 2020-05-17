@@ -1,4 +1,5 @@
-import { OpenTrivaCatergory } from "./OpenTrivaCatergory";
+import { OpenTriviaCategory } from "./question-categories";
+import { QuestionImage } from "./pexels";
 
 export enum ResponseCode {
   Success = 0,
@@ -25,9 +26,18 @@ export enum Difficulty {
 }
 
 export interface OpenTriviaRequest {
-  amount: 10 | number;
-  catergory?: OpenTrivaCatergory;
+  amount: number;
+  catergory?: OpenTriviaCategory;
   difficulty?: Difficulty;
   type?: QuestionsType;
   encode?: TextEncoding;
+}
+
+export interface Question {
+  category: string;
+  type: string;
+  difficulty: string;
+  question: string;
+  correct_answer: string;
+  all_answers: string[];
 }
