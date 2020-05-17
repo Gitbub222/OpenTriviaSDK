@@ -5,7 +5,7 @@ node_modules
 .env 
 
 # Ignore built ts files
-dist/**/*
+# dist/**/*
 
 # ignore yarn.lock
 yarn.lock

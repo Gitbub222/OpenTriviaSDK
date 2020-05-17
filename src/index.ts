@@ -11,6 +11,11 @@ import {
 import { OpenTriviaCategory, categories } from "./question-categories";
 import { QuestionImage, ImageSize } from "./pexels";
 
+export * from './opentrivia';
+export * from './helpers';
+export * from './pexels';
+export * from './question-categories';
+
 config();
 
 const OPEN_TRIVIA_BASE_URL = "https://opentdb.com/api.php?";

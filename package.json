@@ -1,12 +1,19 @@
 {
   "name": "opentriviasdk",
-  "version": "1.1.1",
+  "version": "1.1.4",
   "description": "Open trivia module providing access to open trivia questions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/Gitbub222/OpenTriviaSDK.git",
   "author": "Baraka Mulungula",
   "license": "UNLICENSED",
+  "keywords": [
+    "quiz",
+    "trivia",
+    "opentrivia",
+    "test",
+    "education"
+  ],
   "scripts": {
     "build": "tsc",
     "doc": "typedoc --out docs ./src"
