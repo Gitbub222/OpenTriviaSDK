@@ -31,6 +31,7 @@ export interface OpenTriviaRequest {
   difficulty?: Difficulty;
   type?: QuestionsType;
   encode?: TextEncoding;
+  token?: string;
 }
 
 export interface Question {
