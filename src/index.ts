@@ -129,7 +129,3 @@ export const resetSessionToken = async (session_token: string) => {
   }
   
 };
-
-resetSessionToken('b4b32bb1adb95e2784c20b78169077a0bc4dfc0e46a4e86abd3bc875e969acf0').then((res) => {
-  console.log(res);
-});
