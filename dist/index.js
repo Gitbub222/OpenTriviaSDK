@@ -53,10 +53,11 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetSessionToken = exports.generateSessionToken = exports.getImage = exports.getQuestions = void 0;
+exports.numberOfTotalQuestions = exports.numberOfQuestionsInCategory = exports.listAvailableCategories = exports.resetSessionToken = exports.generateSessionToken = exports.getImage = exports.getQuestions = void 0;
 var axios_1 = require("axios");
 var dotenv_1 = require("dotenv");
 var opentrivia_1 = require("./opentrivia");
+var question_categories_1 = require("./question-categories");
 __exportStar(require("./opentrivia"), exports);
 __exportStar(require("./helpers"), exports);
 __exportStar(require("./pexels"), exports);
@@ -84,13 +85,7 @@ var setRequestURL = function (params) {
 /**
  *
  * returns a list of questions from the Open Trivia API
- * @param params { amount: number;
-                   catergory?: OpenTriviaCategory;
-                   difficulty?: Difficulty;
-                   type?: QuestionsType;
-                   encode?: TextEncoding;
-                   token?: string;
-                 }
+ * @param params  interface OpenTriviaRequest
  *
  */
 exports.getQuestions = function (params) { return __awaiter(void 0, void 0, void 0, function () {
@@ -102,10 +97,10 @@ exports.getQuestions = function (params) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, axios_1.default.get(url)];
             case 1:
                 data = (_a.sent()).data;
-                if (!(data.response_code === opentrivia_1.ResponseCode.Success)) return [3 /*break*/, 3];
-                results = data.results;
-                questionList_1 = [];
-                return [4 /*yield*/, results.forEach(function (question) {
+                if (data.response_code === opentrivia_1.ResponseCode.Success) {
+                    results = data.results;
+                    questionList_1 = [];
+                    results.forEach(function (question) {
                         questionList_1.push({
                             category: question.category,
                             type: question.type,
@@ -116,23 +111,24 @@ exports.getQuestions = function (params) { return __awaiter(void 0, void 0, void
                                 question["correct_answer"]
                             ], question["incorrect_answers"]).sort(function () { return 0.5 - Math.random(); }),
                         });
-                    })];
-            case 2:
-                _a.sent();
-                return [2 /*return*/, questionList_1];
-            case 3:
-                if (data.response_code === opentrivia_1.ResponseCode.NoResults)
-                    console.log("The API doesn't have enough questions for your query");
-                if (data.response_code === opentrivia_1.ResponseCode.TokenNotFound)
-                    console.log("Invalid Token");
-                if (data.response_code === opentrivia_1.ResponseCode.TokenEmpty)
-                    console.log("Session Token has returned all possible questions");
-                return [2 /*return*/, []];
+                    });
+                    return [2 /*return*/, questionList_1];
+                }
+                else {
+                    if (data.response_code === opentrivia_1.ResponseCode.NoResults)
+                        console.log("The API doesn't have enough questions for your query");
+                    if (data.response_code === opentrivia_1.ResponseCode.TokenNotFound)
+                        console.log("Invalid Token");
+                    if (data.response_code === opentrivia_1.ResponseCode.TokenEmpty)
+                        console.log("Session Token has returned all possible questions");
+                    return [2 /*return*/, []];
+                }
+                return [2 /*return*/];
         }
     });
 }); };
 /**
- * Retrieve an image from the pexels api relating to catergory of a question
+ * Retrieve an image from the pexels api relating to the catergory of a question
  *
  * @param query search for any image on pexel
  * @param size size of image {large, original, etc...}
@@ -200,10 +196,53 @@ exports.resetSessionToken = function (session_token) { return __awaiter(void 0, 
                     console.log("Token reset");
                     return [2 /*return*/, token];
                 }
+                else {
+                    console.error({ err: response_code });
+                    return [2 /*return*/, { err: response_code }];
+                }
                 return [2 /*return*/];
         }
     });
 }); };
-exports.resetSessionToken('b4b32bb1adb95e2784c20b78169077a0bc4dfc0e46a4e86abd3bc875e969acf0').then(function (res) {
+/**
+ * Returns the entire list of categories in the OPENTRIVIA database.
+ */
+exports.listAvailableCategories = function () {
+    return Object.values(question_categories_1.categories);
+};
+/**
+ * Returns the number of questions in the database, in a specific category.
+ * @param ID category ID (number) e.g 9
+ */
+exports.numberOfQuestionsInCategory = function (ID) { return __awaiter(void 0, void 0, void 0, function () {
+    var URL, data;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                URL = "https://opentdb.com/api_count.php?category=" + ID;
+                return [4 /*yield*/, axios_1.default.get(URL)];
+            case 1:
+                data = (_a.sent()).data;
+                return [2 /*return*/, data];
+        }
+    });
+}); };
+/**
+ * Returns the number of ALL questions in the database. Total, Pending, Verified, and Rejected.
+ */
+exports.numberOfTotalQuestions = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var URL, data;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                URL = "https://opentdb.com/api_count_global.php";
+                return [4 /*yield*/, axios_1.default.get(URL)];
+            case 1:
+                data = (_a.sent()).data;
+                return [2 /*return*/, data];
+        }
+    });
+}); };
+exports.numberOfTotalQuestions().then(function (res) {
     console.log(res);
 });

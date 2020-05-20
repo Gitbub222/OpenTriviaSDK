@@ -2,6 +2,7 @@ import axios from "axios";
 import { config } from "dotenv";
 import { OpenTriviaRequest, Question, ResponseCode } from "./opentrivia";
 import { QuestionImage, ImageSize } from "./pexels";
+import { categories } from "./question-categories";
 
 export * from "./opentrivia";
 export * from "./helpers";
@@ -36,13 +37,7 @@ const setRequestURL = (params: OpenTriviaRequest): string => {
 /**
  *
  * returns a list of questions from the Open Trivia API
- * @param params { amount: number;
-                   catergory?: OpenTriviaCategory;
-                   difficulty?: Difficulty;
-                   type?: QuestionsType;
-                   encode?: TextEncoding;
-                   token?: string;
-                 }
+ * @param params  interface OpenTriviaRequest 
  *        
  */
 export const getQuestions = async (params: OpenTriviaRequest): Promise <Question [] | []>=> {
@@ -51,7 +46,7 @@ export const getQuestions = async (params: OpenTriviaRequest): Promise <Question
   if (data.response_code === ResponseCode.Success) {
     const { results } = data;
     const questionList: Question[] = [];
-    await results.forEach((question: any) => {
+    results.forEach((question: any) => {
       questionList.push({
         category: question.category,
         type: question.type,
@@ -77,7 +72,7 @@ export const getQuestions = async (params: OpenTriviaRequest): Promise <Question
 };
 
 /**
- * Retrieve an image from the pexels api relating to catergory of a question
+ * Retrieve an image from the pexels api relating to the catergory of a question
  *
  * @param query search for any image on pexel
  * @param size size of image {large, original, etc...}
@@ -117,7 +112,6 @@ export const generateSessionToken = async (): Promise<string | undefined> => {
  * Reset a Session Token
  * @param session_token Session Tokens are unique keys that will help keep track of the questions the API has already retrieved
  */
-
 export const resetSessionToken = async (session_token: string) => {
   const URL = `https://opentdb.com/api_token.php?command=reset&token=${session_token}`;
 
@@ -126,6 +120,35 @@ export const resetSessionToken = async (session_token: string) => {
   if (response_code === ResponseCode.Success) {
     console.log("Token reset");
     return token;
+  }else{
+    console.error({err: response_code})
+    return {err: response_code};
   }
-  
 };
+
+/**
+ * Returns the entire list of categories in the OPENTRIVIA database.
+ */
+export const listAvailableCategories = () => {
+  return Object.values(categories)
+}
+
+/**
+ * Returns the number of questions in the database, in a specific category.
+ * @param ID category ID (number) e.g 9
+ */
+export const numberOfQuestionsInCategory = async (ID: Number) => {
+  const URL = `https://opentdb.com/api_count.php?category=${ID}`;
+  const { data } = await axios.get(URL);
+  return data;
+ }
+
+ /**
+  * Returns the number of ALL questions in the database. Total, Pending, Verified, and Rejected.
+  */
+export const numberOfTotalQuestions = async () => {
+  const URL = "https://opentdb.com/api_count_global.php";
+  const { data } = await axios.get(URL);
+  return data;
+}
+
